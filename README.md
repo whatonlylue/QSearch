@@ -1,4 +1,4 @@
-# searchEngine
+# QSearch
 __Idea created by Luke Wharton on 4/5/2024__
 
 This is my attempt at fixing a problamatic problem currently plagueing my life **forgetting file names**, to get around this my great plan is to provide an on machine search engine (everything is done on your laptop to prevent data scraping) for your files.
