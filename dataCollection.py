@@ -53,5 +53,44 @@ def getCurrent(query: str):
     conn.close()
     return res
 
+
+def updateDB(path="/Users/lukewharton/"):
+    conn = sqlite3.connect("files.db")
+    c = conn.cursor()
+    c.execute("SELECT Name, Path FROM files")
+    res = c.fetchall()
+    additons = 0
+    deletions = 0
+    same = 0
+    for i in range(len(res) - 1, -1, -1):
+        if not os.path.exists(res[i][1]):
+            c.execute(f"DELETE FROM files WHERE Path = '{res[i][1]}'")
+            res.pop(i)
+            deletions += 1
+    
+
+    for root, _, files in os.walk(path, topdown=True):
+        files[:] = [f for f in files if f.endswith(INCLUDE)]
+        
+        for file in files:
+            file_path = os.path.join(root, file)
+            
+            if (file, file_path) in res:
+                same += 1
+                continue
+            else:
+                c.execute(f"INSERT INTO files (Name, Path, isModded, Embedding) VALUES (?, ?, ?, ?)", (file, file_path, 1, "Null"))
+                print(f"File: {file} Path: {file_path}")
+                additons+=1
+    conn.commit()
+    conn.close()
+    return additons, deletions, same
+
+            
+        
+
+
+
 if __name__ == "__main__":
-    firstLoadDB()
+    a, d, s = updateDB()
+    print(f"+ {a} additions, - {d} deletions, {s} kept the same")
