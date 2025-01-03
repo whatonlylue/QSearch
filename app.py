@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (
     QLabel, QWidget, QTextEdit, QSplitter
 )
 from PyQt5.QtCore import Qt
-from dataCollection import getCurrent
+from dataCollection import getCurrent, updateDB
 from fileOpener import extractSampleText
 
 class FileExplorerApp(QMainWindow):
@@ -20,7 +20,8 @@ class FileExplorerApp(QMainWindow):
         # Left Layout: Vertical Tab Bar
         tab_bar = QVBoxLayout()
         self.search_tab = QPushButton("Search")
-        self.file_explore_tab = QPushButton("File Explorer")
+        self.file_explore_tab = QPushButton("Update Files")
+        self.file_explore_tab.clicked.connect(self.update_db)
         self.settings_tab = QPushButton("Settings")
         tab_bar.addWidget(self.search_tab)
         tab_bar.addWidget(self.file_explore_tab)
@@ -104,11 +105,19 @@ class FileExplorerApp(QMainWindow):
         self.preview_widget.setVisible(True)  # Show the preview widget
 
         # Update the preview content
-        content = extractSampleText(file_path) 
+        content = extractSampleText(file_path)
+        trun_file_path = file_path
+        if len(trun_file_path) > 100:
+            trun_file_path = trun_file_path[:100]
 
-        self.file_path_label.setText(file_path)
+        self.file_path_label.setText(trun_file_path)
 
         self.file_preview.setText(content)
+
+    def update_db(self):
+        a, d, s = updateDB()
+        self.file_path_label.setText(f"+ {a}, - {d}, {s} same")
+
 
 
 if __name__ == "__main__":
